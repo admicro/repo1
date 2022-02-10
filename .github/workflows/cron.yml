@@ -1,0 +1,27 @@
+name: Cron BCK every weekend
+
+on:
+  schedule:
+    - cron: "0 0 * * 6,0"
+#on:
+  push:
+    branches:
+    - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@master
+    
+    - name: Run backup
+      if: success()
+      run: |
+        docker run \
+        -e PANTHEON_TOKEN=${{ secrets.PANTHEON_MACHINE_TOKEN }} \
+        -e PANTHEON_SITE=${{ secrets.PANTHEON_DOMAIN }} \
+        -e GDRIVE_FOLDER=${{ secrets.GDRIVE_FOLDER }} \
+        -e SERVICE_ACCOUNT=${{ secrets.SERVICE_ACCOUNT }} \
+        -e SITE_URL=${{ secrets.SITE_URL }} \
+        -e MY_REST_TOKEN=${{ secrets.MY_REST_TOKEN }}
+        huyhoang08/backupweb
